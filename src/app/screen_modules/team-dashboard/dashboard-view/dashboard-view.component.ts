@@ -10,6 +10,7 @@ import { CaponeTemplateComponent } from '../capone-template/capone-template.comp
 import { ITemplate } from './dashboard-view';
 import {Placeholder} from '@angular/compiler/src/i18n/i18n_ast';
 import {BuildConfigFormComponent} from '../../../widget_modules/build/build-config-form/build-config-form.component';
+import {WIDGETS} from '../../../shared/widgetDataLookup';
 
 @Component({
   selector: 'app-dashboard-view',
@@ -35,51 +36,13 @@ export class DashboardViewComponent extends DashboardComponent implements OnInit
     this.dashboardService.loadDashboard(this.dashboardId);
 
     this.baseTemplate = CaponeTemplateComponent;
-
     this.widgets = [
-      {
-        title: 'Placeholder',
-        component: PlaceholderWidgetComponent,
-        status: 'Success',
-        widgetSize: 'col-xl-3',
-        configForm: BuildConfigFormComponent
-      },
-      {
-        title: 'Build',
-        component: BuildWidgetComponent,
-        status: 'Success',
-        widgetSize: 'col-xl-6',
-        configForm: BuildConfigFormComponent
-      }
-      ,
-      {
-        title: 'Placeholder',
-        component: PlaceholderWidgetComponent,
-        status: 'Success',
-        widgetSize: 'col-xl-3',
-        configForm: BuildConfigFormComponent
-      },
-      {
-        title: 'Placeholder',
-        component: PlaceholderWidgetComponent,
-        status: 'Success',
-        widgetSize: 'col-xl-4',
-        configForm: BuildConfigFormComponent
-      },
-      {
-        title: 'Placeholder',
-        component: PlaceholderWidgetComponent,
-        status: 'Success',
-        widgetSize: 'col-xl-4',
-        configForm: BuildConfigFormComponent
-      },
-      {
-        title: 'Placeholder',
-        component: PlaceholderWidgetComponent,
-        status: 'Success',
-        widgetSize: 'col-xl-4',
-        configForm: BuildConfigFormComponent
-      }
+      WIDGETS.placeholder_sm,
+      WIDGETS.build,
+      WIDGETS.placeholder_sm,
+      WIDGETS.placeholder,
+      WIDGETS.placeholder,
+      WIDGETS.placeholder
     ];
   }
 

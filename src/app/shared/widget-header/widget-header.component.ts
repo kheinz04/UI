@@ -16,7 +16,6 @@ import { extend } from 'lodash';
   styleUrls: ['./widget-header.component.scss']
 })
 export class WidgetHeaderComponent implements OnInit {
-
   @Input() widgetType: Type<any>;
   @Input() title;
   @Input() status;
