@@ -8,7 +8,7 @@ import { IWidget } from '../../interfaces';
 })
 export class BaseTemplateComponent  {
 
-  widgets: IWidget[];
+  widgets: IWidget[][];
 
   constructor() { }
 

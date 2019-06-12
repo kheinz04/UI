@@ -1,14 +1,17 @@
 <!-- Gridster future implementation -->
 
 <div class="container">
-  <div class="row" >
-    <div *ngFor="let widget of widgets;" [ngClass]="widget.widgetSize">
-    <app-widget-header
-      [title]="widget.title"
-      [widgetType]="widget.component"
-      [status]="widget.status"
-      [configForm]="widget.configForm">
-    </app-widget-header>
+  <div class="row">
+    <!-- Revisit when we work on dashboard configuration- what size should a widget be if in a widget header? Right now
+    using first as default since all should be the same size when saved in configuration-->
+    <div *ngFor="let widget of widgets;" [ngClass]="widget[0].widgetSize">
+      <app-widget-header
+        [title]="widget[0].title"
+        [widgetType]="widget[0].component"
+        [status]="widget[0].status"
+        [configForm]="widget[0].configForm"
+        [widgetList]="widget">
+      </app-widget-header>
+    </div>
   </div>
-</div>
 </div>

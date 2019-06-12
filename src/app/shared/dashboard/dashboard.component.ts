@@ -11,7 +11,7 @@ export class DashboardComponent {
 
   @Input() baseTemplate: Type<any>;
 
-  public widgets: IWidget[];
+  public widgets: IWidget[][];
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver, private cdr: ChangeDetectorRef) { }
 

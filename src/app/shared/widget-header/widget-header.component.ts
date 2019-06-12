@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ComponentFactoryResolver, Input, OnInit, Type, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, Input, OnInit, Type, ViewChild} from '@angular/core';
 
 import {ConfirmationModalComponent} from '../modals/confirmation-modal/confirmation-modal.component';
 import {FormModalComponent} from '../modals/form-modal/form-modal.component';
@@ -9,13 +9,16 @@ import {DashboardService} from '../dashboard.service';
 import {map, switchMap} from 'rxjs/operators';
 import {zip} from 'rxjs';
 import { extend } from 'lodash';
+import {IWidget} from '../interfaces';
 
 @Component({
   selector: 'app-widget-header',
   templateUrl: './widget-header.component.html',
   styleUrls: ['./widget-header.component.scss']
 })
-export class WidgetHeaderComponent implements OnInit {
+export class WidgetHeaderComponent implements AfterViewInit {
+  @Input() widgetList: IWidget[];
+  @Input() widgetSize;
   @Input() widgetType: Type<any>;
   @Input() title;
   @Input() status;
@@ -29,7 +32,7 @@ export class WidgetHeaderComponent implements OnInit {
               private dashboardService: DashboardService) {
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.loadComponent();
   }
 

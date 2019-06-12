@@ -1,17 +1,38 @@
-<div class="widget-container-small">
-  <div class="widget">
-    <div class="widget-heading">
-      <span>{{title}}</span>
-      <span class="widget-settings-icon clickable pull-right fa fa-trash"
-            (click)="openConfirm()"></span>
-      <span class="widget-settings-icon clickable pull-right fa fa-cog"
-            (click)="openConfig()"></span>
-    </div>
-    <div class="widget-body">
-      <div class="build-view">
-        <!-- widget content -->
-        <ng-template appWidget></ng-template>
+<div *ngIf="widgetList.length > 1; else singleWidget">
+  <div class="container-fluid">
+    <!--  <div class="iteration-change-btn text-standard-sm">-->
+    <!--    <button id="next-btn" class="pull-right btn-default btn-xm active"-->
+    <!--            ng-click="caWidget.animateQualityView(true)"><i class="fa fa-fast-forward"></i></button>-->
+    <!--    <button id="{{caWidget.pausePlaySymbol}}-btn" class="pull-right btn-default btn-xm active"-->
+    <!--            ng-click="caWidget.pauseQualityView()" ng-model="caWidget.pausePlaySymbol"><i-->
+    <!--      class="fa fa-{{caWidget.pausePlaySymbol}}"></i></button>-->
+    <!--  </div>-->
+    <ul class="nav nav-tabs">
+      <li *ngFor="let tab of widgetList;" class="text-standard auth-modal-tab">
+        <!--          ng-click="caWidget.miniToggleView($index)"-->
+        <!--          ng-class="tab.name == caWidget.miniWidgetView ? 'active' : ''">-->
+        <a class="textColor-Performance" data-toggle="tab">{{tab.title}}</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<ng-template #singleWidget>
+  <div class="widget-container-small">
+    <div class="widget">
+      <div class="widget-heading">
+        <span>{{title}}</span>
+        <span class="widget-settings-icon clickable pull-right fa fa-trash"
+              (click)="openConfirm()"></span>
+        <span class="widget-settings-icon clickable pull-right fa fa-cog"
+              (click)="openConfig()"></span>
+      </div>
+      <div class="widget-body">
+        <div class="build-view">
+          <!-- widget content -->
+          <ng-template appWidget></ng-template>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</ng-template>
