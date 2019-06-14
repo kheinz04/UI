@@ -30,7 +30,7 @@ export class WidgetComponent {
   // to subscribe to updates from the upstream dashboard
   // config but also trigger updates for only this widget
   // if needed.
-  protected widgetConfigSubject = new ReplaySubject<any>(1);
+  public widgetConfigSubject = new ReplaySubject<any>(1);
 
   // Wrap the subject as an observable for outside users.
   public widgetConfig$ = this.widgetConfigSubject.asObservable();
@@ -62,6 +62,8 @@ export class WidgetComponent {
   // Specific refresh logic for each widget should be
   // implemented in each subclass.
   startRefreshInterval() {
+  }
+  stopRefreshInterval() {
   }
 
   // Take one dashboard config from the dashboard service.
