@@ -1,4 +1,14 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, Input, OnInit, Type, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ComponentFactoryResolver,
+  Input,
+  OnInit, QueryList,
+  Type,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 
 import {ConfirmationModalComponent} from '../modals/confirmation-modal/confirmation-modal.component';
 import {FormModalComponent} from '../modals/form-modal/form-modal.component';
@@ -23,37 +33,44 @@ export class WidgetHeaderComponent implements AfterViewInit {
   @Input() title;
   @Input() status;
   @Input() configForm: Type<any>;
-  @ViewChild(WidgetDirective) appWidget: WidgetDirective;
-  private widgetComponent;
+  // @ViewChild(WidgetDirective) appWidget: WidgetDirective;
+  @ViewChildren(WidgetDirective) childWidgetTags: QueryList<WidgetDirective>;
+  private widgetComponents: WidgetComponent[] = [];
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
               private cdr: ChangeDetectorRef,
               private modalService: NgbModal,
               private dashboardService: DashboardService) {
   }
-
   ngAfterViewInit() {
-    this.loadComponent();
+    this.loadComponent(this.childWidgetTags);
   }
 
-  loadComponent() {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.widgetType);
-    const viewContainerRef = this.appWidget.viewContainerRef;
-    viewContainerRef.clear();
-    const componentRef = viewContainerRef.createComponent(componentFactory);
-    this.widgetComponent = ( componentRef.instance as WidgetComponent);
-    this.widgetComponent.status = status;
+  loadComponent(widgetTags: QueryList<WidgetDirective>) {
+    if (!widgetTags) {
+      return;
+    }
+    const widgetTagArray = widgetTags.toArray();
+    for (let i = 0; i < widgetTagArray.length && i < this.widgetList.length; i++) {
+      const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.widgetList[i].component);
+      const viewContainerRef = widgetTagArray[i].viewContainerRef;
+      viewContainerRef.clear();
+      const componentRef = viewContainerRef.createComponent(componentFactory);
+      const widgetComponent = ( componentRef.instance as WidgetComponent);
+      this.widgetComponents.push(widgetComponent as WidgetComponent);
+      this.widgetComponents[i].status = this.widgetList[i].status;
+    }
     this.cdr.detectChanges();
   }
 
   // Open the config modal and pass it necessary data. When it is closed pass the results to update them.
-  openConfig() {
+  openConfig(widgetIndex) {
     const modalRef = this.modalService.open(FormModalComponent);
     modalRef.componentInstance.title = 'Configure';
-    modalRef.componentInstance.form = this.configForm;
+    modalRef.componentInstance.form = this.widgetList[0].configForm;
     modalRef.componentInstance.id = 1;
 
-    this.widgetComponent.getCurrentWidgetConfig().subscribe(result => {
+    this.widgetComponents[widgetIndex].getCurrentWidgetConfig().subscribe(result => {
       console.log(result);
       modalRef.componentInstance.widgetConfig = result;
     });
@@ -62,21 +79,21 @@ export class WidgetHeaderComponent implements AfterViewInit {
       if (!newConfig) {
         return;
       }
-      this.widgetComponent.stopRefreshInterval();
+      this.widgetComponents[widgetIndex].stopRefreshInterval();
       console.log(newConfig);
-      this.updateWidgetConfig(newConfig);
+      this.updateWidgetConfig(newConfig, widgetIndex);
     }).catch((error) => {
       console.log(error);
     });
   }
 
-  updateWidgetConfig(newWidgetConfig: any): void {
+  updateWidgetConfig(newWidgetConfig: any, widgetIndex): void {
     if (!newWidgetConfig) {
       return;
     }
 
     // Take the current config and prepare it for saving
-    const newWidgetConfig$ = this.widgetComponent.getCurrentWidgetConfig().pipe(
+    const newWidgetConfig$ = this.widgetComponents[widgetIndex].getCurrentWidgetConfig().pipe(
       map( widgetConfig => {
         extend(widgetConfig, newWidgetConfig);
         return widgetConfig;
@@ -111,8 +128,8 @@ export class WidgetHeaderComponent implements AfterViewInit {
       // Push the new config to the widget, which
       // will trigger whatever is subscribed to
       // widgetConfig$
-      this.widgetComponent.widgetConfigSubject.next(result.widgetConfig);
-      this.widgetComponent.startRefreshInterval();
+      this.widgetComponents[widgetIndex].widgetConfigSubject.next(result.widgetConfig);
+      this.widgetComponents[widgetIndex].startRefreshInterval();
     });
   }
 
