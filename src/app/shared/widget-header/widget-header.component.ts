@@ -9,6 +9,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
+import { interval } from 'rxjs';
 
 import {ConfirmationModalComponent} from '../modals/confirmation-modal/confirmation-modal.component';
 import {FormModalComponent} from '../modals/form-modal/form-modal.component';
@@ -19,7 +20,7 @@ import {DashboardService} from '../dashboard.service';
 import {map, switchMap} from 'rxjs/operators';
 import {zip} from 'rxjs';
 import { extend } from 'lodash';
-import {IWidget} from '../interfaces';
+import {ISelectedWidget, IWidget} from '../interfaces';
 
 @Component({
   selector: 'app-widget-header',
@@ -36,6 +37,13 @@ export class WidgetHeaderComponent implements AfterViewInit {
   // @ViewChild(WidgetDirective) appWidget: WidgetDirective;
   @ViewChildren(WidgetDirective) childWidgetTags: QueryList<WidgetDirective>;
   private widgetComponents: WidgetComponent[] = [];
+  private widgetTabActive;
+
+  /** Auto Cycle variables */
+  private timeoutPromise = null;
+  private changeDetect = null;
+  private pausePlaySymbol = 'play';
+  private timerSubscription;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
               private cdr: ChangeDetectorRef,
@@ -60,14 +68,19 @@ export class WidgetHeaderComponent implements AfterViewInit {
       this.widgetComponents.push(widgetComponent as WidgetComponent);
       this.widgetComponents[i].status = this.widgetList[i].status;
     }
+    this.widgetTabActive = 0;
     this.cdr.detectChanges();
+  }
+
+  tabToggle(index) {
+    this.widgetTabActive = this.widgetList[index] ? index : 0;
   }
 
   // Open the config modal and pass it necessary data. When it is closed pass the results to update them.
   openConfig(widgetIndex) {
     const modalRef = this.modalService.open(FormModalComponent);
     modalRef.componentInstance.title = 'Configure';
-    modalRef.componentInstance.form = this.widgetList[0].configForm;
+    modalRef.componentInstance.form = this.widgetList[this.widgetTabActive].configForm;
     modalRef.componentInstance.id = 1;
 
     this.widgetComponents[widgetIndex].getCurrentWidgetConfig().subscribe(result => {
@@ -86,7 +99,11 @@ export class WidgetHeaderComponent implements AfterViewInit {
       console.log(error);
     });
   }
-
+  openConfirm() {
+    const modalRef = this.modalService.open(ConfirmationModalComponent);
+    modalRef.componentInstance.title = 'Are you sure want to delete this widget from your dashboard?';
+    // modalRef.componentInstance.modalType = ConfirmationModalComponent;
+  }
   updateWidgetConfig(newWidgetConfig: any, widgetIndex): void {
     if (!newWidgetConfig) {
       return;
@@ -132,11 +149,59 @@ export class WidgetHeaderComponent implements AfterViewInit {
       this.widgetComponents[widgetIndex].startRefreshInterval();
     });
   }
+    /**
+     * Changes timeout boolean to know whether or not to count down
+     */
+    startTimeout() {
+      this.stopTimeout();
+      this.timeoutPromise = interval(1000);
+      this.timerSubscription = this.timeoutPromise.subscribe(val => this.animateQualityView(false));
+    }
 
-  openConfirm() {
-    const modalRef = this.modalService.open(ConfirmationModalComponent);
-    modalRef.componentInstance.title = 'Are you sure want to delete this widget from your dashboard?';
-    // modalRef.componentInstance.modalType = ConfirmationModalComponent;
-  }
+    /**
+     * Stops the current cycle promise
+     */
+    stopTimeout() {
+      if ( this.timerSubscription ) {
+        this.timerSubscription.unsubscribe();
+      }
+    }
+
+    /**
+     * Animates quality view switching
+     */
+    animateQualityView(resetTimer) {
+      // update the selected view
+      const newIndex = this.widgetTabActive + 1;
+
+      if (newIndex >= this.widgetList.length) {
+        this.widgetTabActive = 0;
+      } else {
+        this.widgetTabActive = newIndex;
+      }
+
+      if (resetTimer && this.timerSubscription) {
+        this.stopTimeout();
+        this.pausePlaySymbol = 'play';
+      }
+    }
+
+    /**
+     * Pauses quality view switching via manual button from user interaction
+     */
+    pauseQualityView() {
+      if (this.pausePlaySymbol === 'play') {
+        this.pausePlaySymbol = 'pause';
+        this.startTimeout();
+      } else {
+        this.pausePlaySymbol = 'play';
+        this.stopTimeout();
+      }
+    };
+
+
+
+
+
 
 }

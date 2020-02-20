@@ -38,7 +38,7 @@ export class DashboardViewComponent extends DashboardComponent implements OnInit
     this.baseTemplate = CaponeTemplateComponent;
     this.widgets = [
       [WIDGETS.build, WIDGETS.placeholder],
-      // [WIDGETS.build],
+      [WIDGETS.build],
       // [WIDGETS.placeholder_sm],
       // [WIDGETS.placeholder],
       // [WIDGETS.placeholder],

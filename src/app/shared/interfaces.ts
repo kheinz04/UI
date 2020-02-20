@@ -31,3 +31,8 @@ export interface IWidget {
   widgetSize: string;
   configForm: Type<any>;
 }
+
+export interface ISelectedWidget {
+  title: string;
+  index: number;
+}

@@ -46,6 +46,59 @@
     }
   }
 
+  // heading in a widget
+  .widget-heading-tabs {
+    //border-bottom: 1px solid $dash-widget-heading-border;
+    color: $dash-widget-heading-text;
+    letter-spacing: .1em;
+    padding-bottom: .5em;
+    margin-bottom: 1em;
+
+    @include text-lg;
+    @include border-top-radius($dash-widget-border-radius);
+
+    // the cog icon to open the config modal
+    .widget-settings-icon {
+      @include transition(color 300ms ease);
+
+      &:hover {
+        color: $dash-dashboard-text-hover;
+      }
+    }
+
+    .last-updated {
+      font-size: 1.1em;
+    }
+
+
+  }
+
+  .auth-modal-tab {
+     a {
+       color: white;
+     }
+
+     &:hover a, &.active a {
+       color: black;
+     }
+   }
+
+  .tab-content {
+    min-height: 350px;
+  }
+
+  .nav-tabs > li {
+    a, a:hover, a:focus {
+      border-radius: 0;
+    }
+
+    &.active a {
+      border-top-color: $modal-content-bg;
+
+      //#gradient > .vertical($start-color: $modal-content-bg; $end-color: $nav-tabs-active-link-hover-bg; $start-percent: 0; $end-percent: 50%);
+    }
+  }
+
   .widget-heading-performance {
     border-bottom: 0px solid $dash-widget-heading-border;
     color: $dash-widget-heading-text;
@@ -132,14 +185,28 @@
     }
   }
 
-  // // styles when in an alert state
-  // &.alert {
-  //     #gradient > @include vertical(lighten($dash-widget-alert-bg, 10%), darken($dash-widget-alert-bg, 10%));
-  //     color: $dash-widget-alert-text;
+}
 
-  //     .widget-heading {
-  //         border-bottom-color: $dash-widget-alert-heading-border;
-  //         color: $dash-widget-alert-text;
-  //     }
-  // }
+// AUTO LOOP
+// ========================================
+// CSS for widgets with multiple tabs/screens to loop through (using play/pause buttons)
+
+#next-btn {
+  background: none;
+  border: 0;
+  color: $dash-status-ignore;
+}
+#pause-btn {
+  background: none;
+  border: 0;
+  color: $dash-status-warn;
+}
+#play-btn {
+  background: none;
+  border: 0;
+  color: $dash-status-pass;
+}
+#next-btn:hover, #pause-btn:hover, #play-btn:hover {
+  background-color: $dash-widget-section-highlight;
+  opacity: 0.5;
 }
